@@ -32,9 +32,9 @@ silver = (
         F.col("source_sheet"),
         F.col("source_row").cast("long").alias("source_row"),
     )
-    .withColumn("quantity", F.col("quantity_raw").cast("long"))
-    .withColumn("unit_price", F.col("unit_price_raw").cast("decimal(18,4)"))
-    .withColumn("invoice_date", F.to_timestamp("invoice_date_raw", "yyyy-MM-dd HH:mm:ss"))
+    .withColumn("quantity", F.expr("try_cast(quantity_raw AS BIGINT)"))
+    .withColumn("unit_price", F.expr("try_cast(unit_price_raw AS DECIMAL(18,4))"))
+    .withColumn("invoice_date", F.try_to_timestamp(F.col("invoice_date_raw"), F.lit("yyyy-MM-dd HH:mm:ss")))
     .withColumn(
         "is_cancellation",
         F.coalesce(F.upper(F.col("invoice_no")).startswith("C"), F.lit(False))
