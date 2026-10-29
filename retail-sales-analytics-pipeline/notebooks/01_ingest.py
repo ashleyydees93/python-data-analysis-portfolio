@@ -44,7 +44,7 @@ bronze = (
     spark.read.format("csv")
     .option("header", "true")
     .option("mode", "FAILFAST")
-    .option("multiLine", "false")
+    .option("multiLine", "true")
     .schema(csv_schema)
     .load(RAW_CSV)
 )
