@@ -40,7 +40,7 @@ If your path differs, edit \`RAW_CSV\` in notebook 01.
 1. **01_ingest.py** – load typed-as-text source fields into a Bronze Delta table; count and inspect rows.
 2. **02_transform.py** – clean and flag data in Silver; create a valid positive-line Gold table; quality checks.
 3. **03_analyze.py** – materialize KPIs, monthly, product, and country tables.
-4. **04_dashboard.sql** – query the materialized tables. Use Databricks visualization UI to display monthly trend, top products and countries. Save screenshots only after running the real dataset.
+4. **04_dashboard.py** – query the materialized tables. Use Databricks visualization UI to display monthly trend, top products and countries. Save screenshots only after running the real dataset.
 
 The \`.py\` notebook files contain \`# Databricks notebook source\` and \`# COMMAND ----------\`; they are recognized as notebooks in Databricks Git folders. SQL analytics are also in \`sql/analysis.sql\`.
 
