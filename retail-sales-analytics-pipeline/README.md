@@ -33,7 +33,7 @@ retail-sales-analytics-pipeline/
 │   ├── 01_ingest.py
 │   ├── 02_transform.py
 │   ├── 03_analyze.py
-│   └── 04_dashboard.sql
+│   └── 04_dashboard.py
 ├── scripts/
 │   └── prepare_retail_csv.py
 ├── sql/
