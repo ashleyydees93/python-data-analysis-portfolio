@@ -15,7 +15,7 @@ An end-to-end, reproducible retail analytics project based on **UCI Online Retai
 
 ## Pipeline
 
-1. **Source:** Download the original UCI Excel workbook, then convert both worksheets to a consistently named CSV using \`scripts/prepare_retail_csv.py\`.
+1. **Source:** Download the original UCI Excel workbook, then convert both worksheets to a consistently named CSV using `scripts/prepare_retail_csv.py`.
 2. **Bronze:** Load all rows, preserving original raw fields and worksheet/row provenance.
 3. **Silver:** Parse quantities, prices and dates; flag cancellations, valid sale lines, missing IDs, and quality issues. Preserve exceptions for auditing.
 4. **Gold:** Keep qualifying positive sales lines for descriptive analysis without silently deleting possible duplicate invoice lines.
@@ -27,7 +27,7 @@ Python 3.10+ · openpyxl · PySpark · Databricks · Delta Lake · Databricks SQ
 
 ## Project layout
 
-\`\`\`text
+```text
 retail-sales-analytics-pipeline/
 ├── notebooks/
 │   ├── 01_ingest.py
@@ -46,19 +46,19 @@ retail-sales-analytics-pipeline/
 ├── requirements.txt
 ├── .gitignore
 └── README.md
-\`\`\`
+```
 
 ## Run it
 
 See **[Step-by-step setup and verification](docs/runbook.md)**. In short:
 
 1. Download the UCI **online_retail_II.xlsx** file (two sheets); do not commit the workbook to Git.
-2. Run: \`python scripts/prepare_retail_csv.py --input path/to/online_retail_II.xlsx --output data/raw/online_retail_ii.csv\`.
-3. In Databricks, choose your own catalog and create a dedicated schema/volume (the notebook defaults to \`dsc592ayd.retail_portfolio\`; change if needed).
+2. Run: `python scripts/prepare_retail_csv.py --input path/to/online_retail_II.xlsx --output data/raw/online_retail_ii.csv`.
+3. In Databricks, choose your own catalog and create a dedicated schema/volume (the notebook defaults to `dsc592ayd.retail_portfolio`; change if needed).
 4. Upload the generated CSV to the volume, then run notebooks **01**, **02**, **03**, and **04** in order.
-5. Use \`sql/analysis.sql\` for additional queries.
+5. Use `sql/analysis.sql` for additional queries.
 
-The \`.py\` notebooks use the Databricks source-notebook format and are recognized as notebooks in Databricks Git folders.
+The `.py` notebooks use the Databricks source-notebook format and are recognized as notebooks in Databricks Git folders.
 
 ## Definitions & design choices
 
