@@ -1,0 +1,17 @@
+# Never publish downloaded transaction data or exports
+data/
+*.xlsx
+*.xls
+*.zip
+*.parquet
+*.delta
+*.db
+*.sqlite
+# Python caches and credentials
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+.env.*
+*.pyc
+.DS_Store
