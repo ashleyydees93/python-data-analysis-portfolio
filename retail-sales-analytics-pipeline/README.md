@@ -4,11 +4,11 @@
 
 ## Project overview
 
-This is a beginner-friendly project where I practice the SQL and PySpark skills I learned in DSC 592: Data Engineering.
+A project where I practice the SQL and PySpark skills I learned in DSC 592: Data Engineering.
 
 My goal is to take a retail dataset, clean the data, answer a few sales questions, and compare how the same work can be done with Python/PySpark and SQL.
 
-This project is **practice**, not a production pipeline. The code is written using simple methods I can explain.
+This project is **practice**, not a production pipeline.
 
 ## Dataset
 
@@ -102,6 +102,4 @@ For this project, **revenue** means the total value of positive invoice lines: `
 
 I have not published made-up totals, graphs, or findings. Once I run the notebook against the UCI data, I can add the actual results and screenshots.
 
-## What I am practicing
 
-The purpose of this project is to show that I can work with a dataset, write understandable SQL and PySpark code, and explain what the results mean.
