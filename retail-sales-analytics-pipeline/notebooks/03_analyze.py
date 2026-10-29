@@ -20,7 +20,7 @@ kpis = sales.agg(
     F.count("*").alias("eligible_invoice_lines"),
     F.countDistinct("invoice_no").alias("distinct_invoices"),
     F.countDistinct("customer_id").alias("distinct_known_customers"),
-    F.sum("positive_line_value_gbp").cast("decimal(24,2)").alias(
+    F.sum("positive_line_value_gbp").cast("decimal(24,4)").alias(
         "positive_invoice_line_value_gbp"
     ),
 )
@@ -35,7 +35,7 @@ monthly = (
     sales.withColumn("sales_month", F.date_trunc("month", "invoice_date"))
     .groupBy("sales_month")
     .agg(
-        F.sum("positive_line_value_gbp").cast("decimal(24,2)").alias(
+        F.sum("positive_line_value_gbp").cast("decimal(24,4)").alias(
             "positive_invoice_line_value_gbp"
         ),
         F.countDistinct("invoice_no").alias("distinct_invoices"),
@@ -56,7 +56,7 @@ products = (
     .agg(
         F.max("description").alias("sample_description"),
         F.sum("quantity").alias("units_sold"),
-        F.sum("positive_line_value_gbp").cast("decimal(24,2)").alias(
+        F.sum("positive_line_value_gbp").cast("decimal(24,4)").alias(
             "positive_invoice_line_value_gbp"
         ),
     )
@@ -79,7 +79,7 @@ countries = (
     sales.withColumn("country_name", F.coalesce("country", F.lit("Unknown")))
     .groupBy("country_name")
     .agg(
-        F.sum("positive_line_value_gbp").cast("decimal(24,2)").alias(
+        F.sum("positive_line_value_gbp").cast("decimal(24,4)").alias(
             "positive_invoice_line_value_gbp"
         ),
         F.countDistinct("invoice_no").alias("distinct_invoices"),
@@ -93,7 +93,7 @@ display(countries.limit(20))
 
 # COMMAND ----------
 
-# Reconciliation: sum of monthly values should match the one-row positive-line KPI.
+# Reconciliation: unrounded monthly values should match the one-row positive-line KPI.
 from decimal import Decimal
 kpi_total = kpis.first()["positive_invoice_line_value_gbp"]
 monthly_total = monthly.agg(
