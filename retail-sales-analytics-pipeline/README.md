@@ -1,81 +1,107 @@
-# Retail Sales Analytics Pipeline
+# Retail Sales Analysis with SQL and PySpark
 
-**Databricks · PySpark · SQL · Delta Lake · Data Quality**
+**Python | SQL | PySpark | Databricks**
 
-An end-to-end, reproducible retail analytics project based on **UCI Online Retail II**, a public two-year transaction dataset from a UK online retailer. The project demonstrates how to ingest raw invoice-line data, audit quality, build bronze/silver/gold Delta tables, and answer practical sales questions with PySpark and SQL.
+## Project overview
 
-> **Execution status:** The code and automated converter tests are provided, but the Databricks notebooks have **not** been executed in the author's workspace. The full data must be downloaded and uploaded to a Databricks volume before the dashboard tables can be generated. No fabricated analysis results are presented.
+This is a beginner-friendly project where I practice the SQL and PySpark skills I learned in DSC 592: Data Engineering.
 
-## The business questions
+My goal is to take a retail dataset, clean the data, answer a few sales questions, and compare how the same work can be done with Python/PySpark and SQL.
 
-1. How does positive invoice-line value change month by month?
-2. Which products and countries contribute most to that value?
-3. How much of the source data is missing customer IDs, cancelled, nonpositive, or potentially duplicated?
-4. How many orders and identifiable customers appear in the eligible sales lines?
+This project is **practice**, not a production pipeline. The code is written using simple methods I can explain.
 
-## Pipeline
+## Dataset
 
-1. **Source:** Download the original UCI Excel workbook, then convert both worksheets to a consistently named CSV using `scripts/prepare_retail_csv.py`.
-2. **Bronze:** Load all rows, preserving original raw fields and worksheet/row provenance.
-3. **Silver:** Parse quantities, prices and dates; flag cancellations, valid sale lines, missing IDs, and quality issues. Preserve exceptions for auditing.
-4. **Gold:** Keep qualifying positive sales lines for descriptive analysis without silently deleting possible duplicate invoice lines.
-5. **Analytics:** Build Delta reporting tables for monthly sales, top products, country contributions, and overall KPIs; query them using SQL.
+I use the **Online Retail** dataset from the UCI Machine Learning Repository. It has 541,909 original transaction rows from a UK online store, collected between December 2010 and December 2011.
 
-## Tech stack
+- [Download Online Retail from UCI](https://archive.ics.uci.edu/dataset/352/online+retail)
+- Original file: `Online Retail.xlsx`
+- Source currency: **British pounds (£)**
+- Credit: Daqing Chen, *Online Retail* (UCI Machine Learning Repository), [DOI: 10.24432/C5BW33](https://doi.org/10.24432/C5BW33)
+- License: **CC BY 4.0**
 
-Python 3.10+ · openpyxl · PySpark · Databricks · Delta Lake · Databricks SQL · Git/GitHub
+I use the **one-year Online Retail dataset**, rather than the larger two-year Online Retail II workbook, to make the setup and code easier to follow.
 
-## Project layout
+## Questions I want to answer
+
+1. How much positive sales value was there each day?
+2. Which five days had the highest sales value?
+3. Which products had the highest sales value?
+4. Which three products performed best in each country?
+5. Which countries and months had the highest sales values?
+
+## What I used
+
+| Skill | How I used it |
+|---|---|
+| pandas | Changed the Excel file into CSV |
+| PySpark | Loaded data into Databricks and filtered rows |
+| `withColumn` | Created a revenue column using quantity × unit price |
+| `groupBy` and `sum` | Calculated totals |
+| `orderBy` and `limit` | Found top-selling days and products |
+| `ROW_NUMBER` and Window | Ranked products within each country |
+| SQL | Used SELECT, WHERE, GROUP BY, SUM, COUNT, and ORDER BY |
+
+## Project files
 
 ```text
 retail-sales-analytics-pipeline/
+├── prepare_csv.py
 ├── notebooks/
-│   ├── 01_ingest.py
-│   ├── 02_transform.py
-│   ├── 03_analyze.py
-│   └── 04_dashboard.py
-├── scripts/
-│   └── prepare_retail_csv.py
+│   └── retail_sales_analysis.py
 ├── sql/
-│   └── analysis.sql
-├── tests/
-│   └── test_prepare_retail_csv.py
-├── docs/
-│   ├── data_dictionary.md
-│   └── runbook.md
+│   └── retail_queries.sql
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
-## Run it
+**Note:** The `.py` file in `notebooks/` uses Databricks notebook-format comments and opens as a notebook inside a Databricks Git folder.
 
-See **[Step-by-step setup and verification](docs/runbook.md)**. In short:
+## How to run it
 
-1. Download the UCI **online_retail_II.xlsx** file (two sheets); do not commit the workbook to Git.
-2. Run: `python scripts/prepare_retail_csv.py --input path/to/online_retail_II.xlsx --output data/raw/online_retail_ii.csv`.
-3. In Databricks, choose your own catalog and create a dedicated schema/volume (the notebook defaults to `dsc592ayd.retail_portfolio`; change if needed).
-4. Upload the generated CSV to the volume, then run notebooks **01**, **02**, **03**, and **04** in order.
-5. Use `sql/analysis.sql` for additional queries.
+**Step 1 — Download the data**
 
-The `.py` notebooks use the Databricks source-notebook format and are recognized as notebooks in Databricks Git folders.
+Download **Online Retail.xlsx** from the UCI link above. Keep the file on your computer; do not upload the original data to GitHub.
 
-## Definitions & design choices
+**Step 2 — Turn Excel into CSV**
 
-- **Positive invoice-line value (£)** = quantity × unit price for a non-cancellation invoice with positive quantity and price, a valid timestamp, and nonempty invoice/product codes. This is **not net revenue or profit**: returns, cancellations, discount adjustments, postage, and stock costs require more complete accounting rules.
-- Cancellation indicators are **invoice numbers starting with C** or a negative quantity. These records stay available in Silver for inspection, but are not included in the positive-line analysis.
-- Missing CustomerID does **not** automatically make an otherwise valid sale invalid. Those rows remain in product/country totals but are excluded from identifiable-customer counts.
-- Potentially repeated invoice lines are flagged in quality checks, **not automatically deleted**, since apparent duplicate lines might be legitimate.
-- The dataset has **no product category** column. Products are ranked overall rather than inventing categories.
-- Source prices are in **GBP**, and the dataset covers **2009–2011**. This is historical analysis, not current retail performance.
+In the project folder on your computer, install the two packages once:
 
-## Reproducibility and limitations
+```bash
+python -m pip install -r requirements.txt
+```
 
-- All transformations and definitions are in version-controlled files; no data or notebook outputs are fabricated.
-- Database creation and volume access require the appropriate Databricks permissions.
-- This repo does **not** redistribute the source workbook or generated retail data. You must obtain it from UCI.
-- Historic transaction data alone cannot establish profit, margins, inventory, marketing attribution, or causality.
+Put `Online Retail.xlsx` in the same folder as `prepare_csv.py`, then run:
 
-## Source and attribution
+```bash
+python prepare_csv.py
+```
 
-Daqing Chen (2012), **Online Retail II** [Dataset], UCI Machine Learning Repository. DOI: https://doi.org/10.24432/C5CG6D. [Dataset page](https://archive.ics.uci.edu/dataset/502/online+retail+ii). **Dataset license: CC BY 4.0.** This project's code is original project work; source data remains subject to its own license.
+This creates `online_retail.csv`.
+
+**Step 3 — Upload the CSV to Databricks**
+
+Upload `online_retail.csv` to a Unity Catalog volume that you can write to (for example, `/Volumes/dsc592ayd/retail_portfolio/source_data/`). A folder or volume may need to be created first.
+
+**Step 4 — Open and run the notebook**
+
+Open `notebooks/retail_sales_analysis.py` in a Databricks Git folder. Edit the `file_path` value so it matches your CSV location. Run the cells from top to bottom.
+
+The SQL cells use the temporary view created by the Python code. Run them in the same notebook session. The separate `sql/retail_queries.sql` file is a reference copy of the queries.
+
+## Important cleaning decisions
+
+I keep only rows with a present invoice number, a non-cancellation invoice, a positive quantity and price, and a readable date. I do **not** remove a sale simply because the customer ID is missing.
+
+For this project, **revenue** means the total value of positive invoice lines: `Quantity * UnitPrice`. It does **not** represent net revenue, profit, or money after returns. I don't automatically delete apparent duplicate invoice lines.
+
+## Project status
+
+**Code prepared; Databricks execution and results still need to be checked.**
+
+I have not published made-up totals, graphs, or findings. Once I run the notebook against the UCI data, I can add the actual results and screenshots.
+
+## What I am practicing
+
+The purpose of this project is to show that I can work with a dataset, write understandable SQL and PySpark code, and explain what the results mean.
