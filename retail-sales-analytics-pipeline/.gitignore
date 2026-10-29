@@ -1,17 +1,10 @@
-# Never publish downloaded transaction data or exports
-data/
+# Do not publish downloaded or generated retail data
 *.xlsx
-*.xls
-*.zip
-*.parquet
-*.delta
-*.db
-*.sqlite
-# Python caches and credentials
+online_retail.csv
+
+# Python files
 __pycache__/
-.pytest_cache/
 .venv/
 .env
-.env.*
 *.pyc
 .DS_Store
